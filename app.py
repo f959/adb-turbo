@@ -23,6 +23,7 @@ from adb_commands import (
     COMMAND_CATEGORIES
 )
 from config import config, setup_logging
+from profiles import profile_manager
 
 # Setup logging
 setup_logging(config)
@@ -252,6 +253,160 @@ def get_setting():
         
     except Exception as e:
         return api_error(f"Failed to get setting: {str(e)}", status=500)
+
+
+# ============================================
+# Profile Management API
+# ============================================
+
+@app.route('/api/profiles/backup', methods=['POST'])
+def backup_profile():
+    """Backup current device settings"""
+    try:
+        data = request.json
+        device_id = data.get('device_id')
+        manufacturer = data.get('manufacturer')
+        model = data.get('model')
+        
+        if not all([device_id, manufacturer, model]):
+            return api_error('Missing required fields: device_id, manufacturer, model', status=400)
+        
+        profile = profile_manager.backup_device_settings(device_id, manufacturer, model)
+        
+        return api_success(
+            data={'profile': profile},
+            message=f"Backed up {len(profile['settings'])} settings"
+        )
+        
+    except Exception as e:
+        return api_error(f"Failed to backup settings: {str(e)}", status=500)
+
+
+@app.route('/api/profiles/restore', methods=['POST'])
+def restore_profile():
+    """Restore device settings from backup"""
+    try:
+        data = request.json
+        device_id = data.get('device_id')
+        manufacturer = data.get('manufacturer')
+        model = data.get('model')
+        backup_index = data.get('backup_index', 0)
+        
+        if not all([device_id, manufacturer, model]):
+            return api_error('Missing required fields: device_id, manufacturer, model', status=400)
+        
+        results = profile_manager.restore_device_settings(
+            device_id, manufacturer, model, backup_index
+        )
+        
+        return api_success(
+            data={'results': results},
+            message=f"Restored {len(results['success'])} settings"
+        )
+        
+    except ValueError as e:
+        return api_error(str(e), status=404)
+    except Exception as e:
+        return api_error(f"Failed to restore settings: {str(e)}", status=500)
+
+
+@app.route('/api/profiles/list', methods=['POST'])
+def list_profiles():
+    """Get all backups for a device"""
+    try:
+        data = request.json
+        manufacturer = data.get('manufacturer')
+        model = data.get('model')
+        
+        if not all([manufacturer, model]):
+            return api_error('Missing required fields: manufacturer, model', status=400)
+        
+        backups = profile_manager.get_device_backups(manufacturer, model)
+        
+        return api_success(data={'backups': backups})
+        
+    except Exception as e:
+        return api_error(f"Failed to list profiles: {str(e)}", status=500)
+
+
+@app.route('/api/profiles/export', methods=['POST'])
+def export_profile():
+    """Export a profile for sharing"""
+    try:
+        data = request.json
+        manufacturer = data.get('manufacturer')
+        model = data.get('model')
+        backup_index = data.get('backup_index', 0)
+        
+        if not all([manufacturer, model]):
+            return api_error('Missing required fields: manufacturer, model', status=400)
+        
+        profile = profile_manager.export_profile(manufacturer, model, backup_index)
+        
+        return api_success(data={'profile': profile})
+        
+    except ValueError as e:
+        return api_error(str(e), status=404)
+    except Exception as e:
+        return api_error(f"Failed to export profile: {str(e)}", status=500)
+
+
+@app.route('/api/profiles/import', methods=['POST'])
+def import_profile():
+    """Import a profile from external source"""
+    try:
+        data = request.json
+        profile_data = data.get('profile')
+        device_id = data.get('device_id')
+        
+        if not profile_data or not device_id:
+            return api_error('Missing required fields: profile, device_id', status=400)
+        
+        profile = profile_manager.import_profile(profile_data, device_id)
+        
+        return api_success(
+            data={'profile': profile},
+            message="Profile imported successfully"
+        )
+        
+    except ValueError as e:
+        return api_error(str(e), status=400)
+    except Exception as e:
+        return api_error(f"Failed to import profile: {str(e)}", status=500)
+
+
+@app.route('/api/profiles/presets', methods=['GET'])
+def get_presets():
+    """Get available preset configurations"""
+    try:
+        presets = profile_manager.get_preset_info()
+        return api_success(data={'presets': presets})
+    except Exception as e:
+        return api_error(f"Failed to get presets: {str(e)}", status=500)
+
+
+@app.route('/api/profiles/apply-preset', methods=['POST'])
+def apply_preset():
+    """Apply a preset configuration"""
+    try:
+        data = request.json
+        device_id = data.get('device_id')
+        preset_name = data.get('preset_name')
+        
+        if not device_id or not preset_name:
+            return api_error('Missing required fields: device_id, preset_name', status=400)
+        
+        results = profile_manager.apply_preset(device_id, preset_name)
+        
+        return api_success(
+            data={'results': results},
+            message=f"Applied preset: {len(results['success'])} settings changed"
+        )
+        
+    except ValueError as e:
+        return api_error(str(e), status=400)
+    except Exception as e:
+        return api_error(f"Failed to apply preset: {str(e)}", status=500)
 
 
 def print_banner(url):
