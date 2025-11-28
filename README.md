@@ -17,6 +17,12 @@ We've organized everything into 13 clear categories, from disabling animations f
 
 Think of it as a friendly control panel for the performance settings Android doesn't usually expose. No promises of miracles, just practical optimizations that actually work.
 
+## 🎭 Live Demo
+
+Want to see what adb-turbo looks like before installing? Check out our **[live demo on GitHub Pages](https://kibotu.github.io/adb-turbo/)**!
+
+**Note**: The demo is a preview version that showcases the interface. To use adb-turbo with real Android devices, you'll need to run it locally (see Quick Start below).
+
 ## Quick Start
 
 Getting started is easy! Just run:
