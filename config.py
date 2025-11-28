@@ -1,5 +1,5 @@
 """
-Configuration Management for ADB Performance Optimizer
+Configuration Management for adb-turbo
 Supports environment variables with sensible defaults
 """
 

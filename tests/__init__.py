@@ -1,4 +1,4 @@
 """
-Test suite for ADB Performance Optimizer
+Test suite for adb-turbo
 """
 

@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # ============================================
-# ADB Performance Optimizer - Cleanup Script
+# adb-turbo - Cleanup Script
 # Frees port 8765 and stops any running servers
 # ============================================
 
 PORT=8765
 
-echo "🧹 Cleaning up ADB Performance Optimizer..."
+echo "🧹 Cleaning up adb-turbo..."
 
 # Kill any running Flask servers
 if pkill -f "python.*app.py" 2>/dev/null; then

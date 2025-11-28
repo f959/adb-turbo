@@ -1,7 +1,7 @@
 [project]
-name = "adb-performance-optimizer"
+name = "adb-turbo"
 version = "1.0.0"
-description = "Professional web-based ADB command manager for Android performance optimization"
+description = "A friendly web-based tool for Android performance optimization via ADB"
 requires-python = ">=3.10"
 dependencies = [
     "flask>=3.0.0",

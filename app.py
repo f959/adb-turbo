@@ -1,6 +1,6 @@
 """
-ADB Performance Optimizer - Flask Backend
-Professional web-based ADB command manager
+adb-turbo - Flask Backend
+A friendly web-based tool for Android performance optimization
 """
 
 from flask import Flask, render_template, jsonify, request, send_from_directory
@@ -259,8 +259,8 @@ def print_banner(url):
     banner = f"""
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
-║        ADB Performance Optimizer                             ║
-║        Professional Android Performance Tool                 ║
+║        adb-turbo                                             ║
+║        Friendly Android Performance Tool                     ║
 ║                                                              ║
 ╚══════════════════════════════════════════════════════════════╝
 
@@ -282,7 +282,7 @@ Press Ctrl+C to stop the server
 def cleanup():
     """Cleanup function to run on exit"""
     print(f"\n\n👋 Server stopped. Port {config.PORT} is now free.")
-    print("Thank you for using ADB Performance Optimizer!")
+    print("Thank you for using adb-turbo!")
     logger.info("Server stopped")
 
 

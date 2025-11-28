@@ -1,6 +1,6 @@
 @echo off
 REM ============================================
-REM ADB Performance Optimizer - Launch Script (Windows)
+REM adb-turbo - Launch Script (Windows)
 REM ============================================
 
 setlocal enabledelayedexpansion
@@ -26,8 +26,8 @@ REM ============================================
 echo %PURPLE%
 echo ╔══════════════════════════════════════════════════════════════╗
 echo ║                                                              ║
-echo ║        ADB Performance Optimizer                             ║
-echo ║        Professional Android Performance Tool                 ║
+echo ║        adb-turbo                                             ║
+echo ║        Friendly Android Performance Tool                     ║
 echo ║                                                              ║
 echo ╚══════════════════════════════════════════════════════════════╝
 echo %NC%
@@ -159,7 +159,7 @@ REM ============================================
 :main
 call :print_banner
 
-echo %CYAN%Starting ADB Performance Optimizer...%NC%
+echo %CYAN%Starting adb-turbo...%NC%
 echo.
 
 REM Check prerequisites

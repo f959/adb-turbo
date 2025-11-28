@@ -1,6 +1,6 @@
-# ADB Performance Optimizer
+# adb-turbo
 
-A web-based tool to help you tune your Android device's performance using ADB commands. We've organized 43 optimizations across 13 categories in a clean, easy-to-use interface.
+A friendly web-based tool to help you tune your Android device's performance using ADB commands. We've organized 43 optimizations across 13 categories in a clean, easy-to-use interface.
 
 ## Quick Start
 
@@ -19,17 +19,17 @@ The server will start at **http://localhost:8765** and automatically open in you
   <tr>
     <td width="33%">
       <a href="docs/screenshot_part1.png">
-        <img src="docs/screenshot_part1.png" alt="ADB Performance Optimizer - Top Section" width="100%">
+        <img src="docs/screenshot_part1.png" alt="adb-turbo - Top Section" width="100%">
       </a>
     </td>
     <td width="33%">
       <a href="docs/screenshot_part2.png">
-        <img src="docs/screenshot_part2.png" alt="ADB Performance Optimizer - Middle Section" width="100%">
+        <img src="docs/screenshot_part2.png" alt="adb-turbo - Middle Section" width="100%">
       </a>
     </td>
     <td width="33%">
       <a href="docs/screenshot_part3.png">
-        <img src="docs/screenshot_part3.png" alt="ADB Performance Optimizer - Bottom Section" width="100%">
+        <img src="docs/screenshot_part3.png" alt="adb-turbo - Bottom Section" width="100%">
       </a>
     </td>
   </tr>

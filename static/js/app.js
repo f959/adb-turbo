@@ -1,5 +1,5 @@
 /**
- * ADB Performance Optimizer - Frontend Application
+ * adb-turbo - Frontend Application
  * Professional web-based ADB command manager
  */
 
@@ -978,7 +978,7 @@ async function handleToggle(toggleElement) {
  * Initialize application
  */
 async function init() {
-    logToConsole('Initializing ADB Performance Optimizer...', 'info');
+    logToConsole('Initializing adb-turbo...', 'info');
     
     // Load collapsed sections from localStorage
     loadCollapsedSections();

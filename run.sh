@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ============================================
-# ADB Performance Optimizer - Launch Script
+# adb-turbo - Launch Script
 # ============================================
 
 set -e
@@ -28,8 +28,8 @@ print_banner() {
     cat << "EOF"
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
-║        ADB Performance Optimizer                             ║
-║        Professional Android Performance Tool                 ║
+║        adb-turbo                                             ║
+║        Friendly Android Performance Tool                     ║
 ║                                                              ║
 ╚══════════════════════════════════════════════════════════════╝
 EOF
@@ -183,7 +183,7 @@ cleanup() {
     sleep 1
     
     echo -e "${GREEN}✓ Port ${PORT} is now free${NC}"
-    echo -e "${GREEN}👋 Thank you for using ADB Performance Optimizer!${NC}"
+    echo -e "${GREEN}👋 Thank you for using adb-turbo!${NC}"
     exit 0
 }
 
@@ -195,7 +195,7 @@ trap cleanup SIGINT SIGTERM EXIT
 main() {
     print_banner
     
-    echo -e "${CYAN}Starting ADB Performance Optimizer...${NC}"
+    echo -e "${CYAN}Starting adb-turbo...${NC}"
     echo ""
     
     # Check prerequisites
