@@ -549,54 +549,6 @@ Understanding Android's internal settings is valuable for:
 
 This tool is for learning, testing, and informed optimization—not guaranteed performance gains. Results vary by device, and understanding trade-offs is essential.
 
-## Roadmap & Community
-
-### Planned Features
-
-**Configuration Management:**
-- ✨ Custom profile creation and saving
-- ✨ Profile export/import for team sharing
-- ✨ Configuration versioning and comparison
-
-**Compatibility & Safety:**
-- ✨ Device compatibility detection (warn about unsupported commands)
-- ✨ Pre-execution command validation
-- ✨ Enhanced device information display
-- ✨ Compatibility database from community testing
-
-**Measurement & Analysis:**
-- ✨ Benchmark integration for objective results
-- ✨ Before/after comparison metrics
-- ✨ Battery and performance tracking
-
-**Advanced Features:**
-- Context-aware profile switching (battery level, app usage)
-- Per-app performance profiles
-- Community-contributed command categories (peer-reviewed)
-- Integration with CI/CD for automated device configuration
-
-### Community Contributions
-
-**Testing & Validation:**
-- Test on different devices and Android versions
-- Document compatibility findings
-- Share benchmark results and measurements
-- Validate settings behavior on various manufacturers
-
-**Documentation & Education:**
-- Improve command explanations
-- Add use case examples
-- Translate for international community
-- Create video tutorials
-
-**Development:**
-- Add new commands with documentation
-- Improve UI/UX
-- Build integrations (CI/CD, testing frameworks)
-- Contribute compatibility data
-
-Education and transparency remain core values. Understanding Android internals is as valuable as the optimizations themselves.
-
 ## Contributing
 
 Contributions are warmly welcomed! Whether you're fixing a bug, adding a feature, or improving documentation, your help makes this tool better for everyone. 🙌
@@ -607,6 +559,15 @@ Contributions are warmly welcomed! Whether you're fixing a bug, adding a feature
 4. **Run tests**: `uv run pytest`
 5. Test with real devices
 6. Submit a pull request
+
+**Ideas for contributions:**
+- Additional command categories
+- Better device compatibility detection
+- Batch command execution
+- Cloud sync for profiles
+- Community profile sharing
+- Enhanced test coverage
+- Translations and internationalization
 
 Every contribution, no matter how small, is appreciated! 💙
 
