@@ -1,0 +1,273 @@
+"""
+ADB Performance Optimizer - Flask Backend
+Professional web-based ADB command manager
+"""
+
+from flask import Flask, render_template, jsonify, request, send_from_directory
+from flask_cors import CORS
+import os
+import sys
+import signal
+import atexit
+from adb_commands import (
+    check_adb_available,
+    get_connected_devices,
+    execute_adb_command,
+    get_categories_json,
+    get_device_manufacturer,
+    get_device_location,
+    get_comprehensive_device_info,
+    get_command_state,
+    COMMAND_CATEGORIES
+)
+
+app = Flask(__name__, static_folder='static', template_folder='static')
+CORS(app)
+
+# Configuration
+HOST = '0.0.0.0'
+PORT = 8765
+
+
+@app.route('/')
+def index():
+    """Serve the main web interface"""
+    return send_from_directory('static', 'index.html')
+
+
+@app.route('/api/check-adb', methods=['GET'])
+def check_adb():
+    """Check if ADB is installed and available"""
+    available, message = check_adb_available()
+    return jsonify({
+        'available': available,
+        'message': message
+    })
+
+
+@app.route('/api/devices', methods=['GET'])
+def get_devices():
+    """Get list of connected ADB devices"""
+    devices = get_connected_devices()
+    return jsonify({
+        'success': True,
+        'devices': devices
+    })
+
+
+@app.route('/api/device-info/<device_id>', methods=['GET'])
+def get_device_info(device_id):
+    """Get device information and capabilities"""
+    try:
+        manufacturer = get_device_manufacturer(device_id)
+        
+        # Get device model
+        success, model, _ = execute_adb_command(device_id, "shell getprop ro.product.model")
+        model = model.strip() if success else "Unknown"
+        
+        # Get Android version
+        success, android_version, _ = execute_adb_command(device_id, "shell getprop ro.build.version.release")
+        android_version = android_version.strip() if success else "Unknown"
+        
+        # Get SDK version
+        success, sdk_version, _ = execute_adb_command(device_id, "shell getprop ro.build.version.sdk")
+        sdk_version = sdk_version.strip() if success else "Unknown"
+        
+        # Get device location
+        latitude, longitude = get_device_location(device_id)
+        
+        # Get comprehensive device information
+        comprehensive_info = get_comprehensive_device_info(device_id)
+        
+        return jsonify({
+            'success': True,
+            'device_id': device_id,
+            'manufacturer': manufacturer,
+            'model': model,
+            'android_version': android_version,
+            'sdk_version': sdk_version,
+            'is_samsung': manufacturer == 'samsung',
+            'location': {
+                'latitude': latitude,
+                'longitude': longitude,
+                'available': latitude is not None and longitude is not None
+            },
+            'details': comprehensive_info
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/categories', methods=['GET'])
+def get_categories():
+    """Get all command categories with their commands"""
+    try:
+        categories = get_categories_json()
+        return jsonify({
+            'success': True,
+            'categories': categories
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/command-states/<device_id>', methods=['GET'])
+def get_command_states(device_id):
+    """Get the current state of all commands for a device"""
+    try:
+        states = {}
+        
+        # Iterate through all categories and commands
+        for category in COMMAND_CATEGORIES:
+            for cmd in category.commands:
+                if cmd.get_cmd:
+                    # Get the current state
+                    state = get_command_state(device_id, cmd.get_cmd)
+                    # Use command name as key
+                    states[cmd.name] = state
+        
+        return jsonify({
+            'success': True,
+            'states': states
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/execute', methods=['POST'])
+def execute_command():
+    """Execute an ADB command on a device"""
+    try:
+        data = request.json
+        device_id = data.get('device_id')
+        command = data.get('command')
+        action = data.get('action', 'disable')  # enable or disable
+        
+        if not device_id:
+            return jsonify({
+                'success': False,
+                'error': 'No device selected'
+            }), 400
+        
+        if not command:
+            return jsonify({
+                'success': False,
+                'error': 'No command provided'
+            }), 400
+        
+        # Execute the command
+        success, stdout, stderr = execute_adb_command(device_id, command)
+        
+        # Prepare output
+        output = stdout if stdout else stderr
+        if not output:
+            output = "Command executed successfully" if success else "Command failed with no output"
+        
+        return jsonify({
+            'success': success,
+            'output': output,
+            'error': stderr if not success else None
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/get-setting', methods=['POST'])
+def get_setting():
+    """Get current value of a setting"""
+    try:
+        data = request.json
+        device_id = data.get('device_id')
+        namespace = data.get('namespace', 'global')  # global, secure, system
+        key = data.get('key')
+        
+        if not device_id or not key:
+            return jsonify({
+                'success': False,
+                'error': 'Missing device_id or key'
+            }), 400
+        
+        # Get the setting value
+        command = f"shell settings get {namespace} {key}"
+        success, stdout, stderr = execute_adb_command(device_id, command)
+        
+        value = stdout.strip() if success else None
+        
+        return jsonify({
+            'success': success,
+            'value': value,
+            'error': stderr if not success else None
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+def print_banner(url):
+    """Print a nice banner with the server URL"""
+    banner = f"""
+╔══════════════════════════════════════════════════════════════╗
+║                                                              ║
+║        ADB Performance Optimizer                             ║
+║        Professional Android Performance Tool                 ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+
+🚀 Server running at: {url}
+
+📱 Make sure:
+   • ADB is installed and in your PATH
+   • USB debugging is enabled on your Android device
+   • Your device is connected via USB
+
+💡 The web interface will open automatically in your browser
+
+Press Ctrl+C to stop the server
+"""
+    print(banner)
+
+
+def cleanup():
+    """Cleanup function to run on exit"""
+    print("\n\n👋 Server stopped. Port {PORT} is now free.")
+    print("Thank you for using ADB Performance Optimizer!")
+
+
+def signal_handler(sig, frame):
+    """Handle interrupt signals gracefully"""
+    cleanup()
+    sys.exit(0)
+
+
+if __name__ == '__main__':
+    # Register cleanup handlers
+    atexit.register(cleanup)
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    
+    # Print banner
+    url = f"http://localhost:{PORT}"
+    print_banner(url)
+    
+    # Run the Flask app
+    try:
+        app.run(host=HOST, port=PORT, debug=False, use_reloader=False)
+    except (KeyboardInterrupt, SystemExit):
+        pass  # Cleanup handled by signal_handler
+

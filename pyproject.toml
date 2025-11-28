@@ -1,0 +1,13 @@
+[project]
+name = "adb-performance-optimizer"
+version = "1.0.0"
+description = "Professional web-based ADB command manager for Android performance optimization"
+requires-python = ">=3.10"
+dependencies = [
+    "flask>=3.0.0",
+    "flask-cors>=4.0.0",
+]
+
+[dependency-groups]
+dev = []
+
