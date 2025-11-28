@@ -13,8 +13,6 @@ The server starts at **http://localhost:8765** and opens automatically in your b
 
 **Stop server:** Press `Ctrl+C`
 
-## Screenshots
-
 <table>
   <tr>
     <td width="33%">
@@ -135,19 +133,6 @@ uv run python app.py
 
 Learn more about UV at [docs.astral.sh/uv](https://docs.astral.sh/uv/)
 
-## Project Structure
-
-```
-├── app.py              # Flask API server
-├── adb_commands.py     # Command definitions and execution logic
-├── run.sh / run.bat    # Launch scripts with auto-setup
-├── cleanup.sh          # Port cleanup utility
-├── pyproject.toml      # Python dependencies
-└── static/
-    ├── index.html      # Web interface
-    ├── css/style.css   # Styling
-    └── js/app.js       # Frontend logic
-```
 
 ## API Reference
 
@@ -228,13 +213,6 @@ pkill -f "python.*app.py" # Manual cleanup
 - **Tools:** Android Debug Bridge (ADB), UV package manager
 - **Design:** Responsive, mobile-first, accessible
 
-## Design Philosophy
-
-This tool follows three principles:
-
-- **Pragmatic** - One-click toggles, automatic state detection, persistent preferences
-- **Humble** - Clear documentation, honest about limitations, no overselling
-- **Excellent** - Proper error handling, loading states, accessibility, clean code
 
 ## Important Notes
 
@@ -274,11 +252,30 @@ Command collection inspired by [Technastic's ADB Commands Guide](https://technas
 
 Built for the Android developer community.
 
+
 ## License
 
-MIT License - See LICENSE file for details.
+```
+Copyright 2025 Jan Rabe & CHECK24
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
 
 ---
+
+## Contributing
+
+Contributions welcome! This tool helps iOS teams monitor and optimize app size metrics.
 
 **Questions or issues?** Open an issue on GitHub.
 
