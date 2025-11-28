@@ -96,7 +96,30 @@ Apply optimized settings with one click:
 - Up to 10 backups per device
 - Device-specific profiles (based on manufacturer + model)
 
-See [PROFILES_GUIDE.md](PROFILES_GUIDE.md) for detailed documentation.
+**Testing with SmolChat App:**
+
+We tested the profiles using the SmolChat app to measure their impact on token count for local LLMs:
+
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <strong>🚀 High Performance Profile</strong><br>
+      <a href="docs/high-performance.gif">
+        <img src="docs/high-performance.gif" alt="High Performance Profile Demo" width="100%">
+      </a>
+      <em>Maximum speed for gaming and intensive tasks</em>
+    </td>
+    <td width="50%" align="center">
+      <strong>⭐ Default Settings Profile</strong><br>
+      <a href="docs/default-settings.gif">
+        <img src="docs/default-settings.gif" alt="Default Settings Profile Demo" width="100%">
+      </a>
+      <em>Balanced performance for everyday use</em>
+    </td>
+  </tr>
+</table>
+
+
 
 ## Requirements
 
