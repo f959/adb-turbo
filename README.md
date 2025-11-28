@@ -13,6 +13,31 @@ The server starts at **http://localhost:8765** and opens automatically in your b
 
 **Stop server:** Press `Ctrl+C`
 
+## Screenshots
+
+<table>
+  <tr>
+    <td width="33%">
+      <a href="docs/screenshot_part1.png">
+        <img src="docs/screenshot_part1.png" alt="ADB Performance Optimizer - Top Section" width="100%">
+      </a>
+      <p align="center"><em>Device Selection & High Impact Commands</em></p>
+    </td>
+    <td width="33%">
+      <a href="docs/screenshot_part2.png">
+        <img src="docs/screenshot_part2.png" alt="ADB Performance Optimizer - Middle Section" width="100%">
+      </a>
+      <p align="center"><em>Medium Impact Optimizations</em></p>
+    </td>
+    <td width="33%">
+      <a href="docs/screenshot_part3.png">
+        <img src="docs/screenshot_part3.png" alt="ADB Performance Optimizer - Bottom Section" width="100%">
+      </a>
+      <p align="center"><em>Low Impact Settings & Console</em></p>
+    </td>
+  </tr>
+</table>
+
 ## Requirements
 
 - **Python 3.10+**
