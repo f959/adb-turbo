@@ -5,7 +5,12 @@ Categorized by impact with detailed metadata and execution logic
 
 import subprocess
 import json
+import logging
 from typing import Dict, List, Optional, Tuple
+
+# Configure logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class ADBCommand:
@@ -41,18 +46,25 @@ def execute_adb_command(device_id: str, command: str) -> Tuple[bool, str, str]:
     """
     Execute an ADB command on a specific device
     Returns: (success, stdout, stderr)
+    
+    Security: Uses list-based subprocess calls to prevent command injection
     """
     try:
-        # Construct full ADB command
-        if device_id:
-            full_cmd = f"adb -s {device_id} {command}"
-        else:
-            full_cmd = f"adb {command}"
+        # Construct command as list (safer than shell=True)
+        cmd_parts = ["adb"]
         
-        # Execute command
+        if device_id:
+            cmd_parts.extend(["-s", device_id])
+        
+        # Parse command string into parts
+        # Handle quoted arguments properly
+        import shlex
+        cmd_parts.extend(shlex.split(command))
+        
+        # Execute command without shell
         result = subprocess.run(
-            full_cmd,
-            shell=True,
+            cmd_parts,
+            shell=False,
             capture_output=True,
             text=True,
             timeout=30
@@ -62,8 +74,10 @@ def execute_adb_command(device_id: str, command: str) -> Tuple[bool, str, str]:
         return success, result.stdout, result.stderr
         
     except subprocess.TimeoutExpired:
+        logger.warning(f"Command timed out for device {device_id}: {command}")
         return False, "", "Command timed out after 30 seconds"
     except Exception as e:
+        logger.error(f"Error executing command on device {device_id}: {command}", exc_info=True)
         return False, "", f"Error executing command: {str(e)}"
 
 
@@ -122,7 +136,7 @@ def get_connected_devices() -> List[Dict[str, str]]:
         return devices
         
     except Exception as e:
-        print(f"Error getting devices: {e}")
+        logger.error(f"Error getting devices: {e}", exc_info=True)
         return []
 
 
@@ -168,7 +182,7 @@ def get_device_location(device_id: str) -> tuple:
         return None, None
         
     except Exception as e:
-        print(f"Error getting device location: {e}")
+        logger.error(f"Error getting device location: {e}", exc_info=True)
         return None, None
 
 
@@ -325,7 +339,7 @@ def get_comprehensive_device_info(device_id: str) -> dict:
         return info
         
     except Exception as e:
-        print(f"Error getting comprehensive device info: {e}")
+        logger.error(f"Error getting comprehensive device info: {e}", exc_info=True)
         return info
 
 

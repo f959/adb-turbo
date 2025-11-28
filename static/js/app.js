@@ -27,6 +27,7 @@ const API_BASE = window.location.origin;
 
 /**
  * Make API request with error handling
+ * Handles standardized API response format
  */
 async function apiRequest(endpoint, options = {}) {
     try {
@@ -38,13 +39,14 @@ async function apiRequest(endpoint, options = {}) {
             ...options
         });
         
-        const data = await response.json();
+        const result = await response.json();
         
-        if (!response.ok) {
-            throw new Error(data.error || 'Request failed');
+        if (!response.ok || !result.success) {
+            throw new Error(result.error || 'Request failed');
         }
         
-        return data;
+        // Return the data portion of standardized response
+        return result.data || result;
     } catch (error) {
         console.error('API request failed:', error);
         throw error;

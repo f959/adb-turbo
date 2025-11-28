@@ -133,10 +133,57 @@ uv run python app.py
 
 Learn more about UV at [docs.astral.sh/uv](https://docs.astral.sh/uv/)
 
+## Configuration
+
+The application can be configured using environment variables:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `ADB_HOST` | `0.0.0.0` | Server host address |
+| `ADB_PORT` | `8765` | Server port number |
+| `DEBUG` | `False` | Enable debug mode |
+| `LOG_LEVEL` | `INFO` | Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL) |
+| `LOG_FILE` | `None` | Optional log file path |
+| `ADB_TIMEOUT` | `30` | ADB command timeout in seconds |
+| `CORS_ORIGINS` | `*` | CORS allowed origins |
+
+**Example:**
+```bash
+export ADB_PORT=9000
+export LOG_LEVEL=DEBUG
+export LOG_FILE=adb_optimizer.log
+./run.sh
+```
+
 
 ## API Reference
 
-The Flask backend exposes these endpoints:
+The Flask backend exposes these endpoints with standardized JSON responses:
+
+### Response Format
+
+All API responses follow this standardized format:
+
+**Success Response:**
+```json
+{
+  "success": true,
+  "data": { /* response data */ },
+  "timestamp": "2025-11-28T12:00:00.000Z"
+}
+```
+
+**Error Response:**
+```json
+{
+  "success": false,
+  "error": "Error message",
+  "details": { /* optional error details */ },
+  "timestamp": "2025-11-28T12:00:00.000Z"
+}
+```
+
+### Endpoints
 
 ```
 GET  /                          # Web interface
@@ -206,11 +253,33 @@ pkill -f "python.*app.py" # Manual cleanup
 - Some commands may not work on all devices/Android versions
 - Manufacturer-specific restrictions may apply
 
+## Testing
+
+Run the test suite to verify everything works correctly:
+
+```bash
+# Install development dependencies
+uv sync --group dev
+
+# Run all tests
+uv run pytest
+
+# Run tests with coverage report
+uv run pytest --cov
+
+# Run specific test file
+uv run pytest tests/test_adb_commands.py
+
+# Run tests matching a pattern
+uv run pytest -k "test_execute"
+```
+
 ## Tech Stack
 
 - **Backend:** Python 3.10+, Flask 3.0+, Flask-CORS 4.0+
 - **Frontend:** Vanilla JavaScript, HTML5, CSS3
 - **Tools:** Android Debug Bridge (ADB), UV package manager
+- **Testing:** pytest, pytest-cov
 - **Design:** Responsive, mobile-first, accessible
 
 
@@ -229,6 +298,45 @@ pkill -f "python.*app.py" # Manual cleanup
 - Some commands may not work on all devices or Android versions
 - Manufacturer skins (One UI, MIUI, etc.) may behave differently
 
+## Development
+
+### Project Structure
+
+```
+adb/
+├── app.py              # Flask application and API endpoints
+├── adb_commands.py     # ADB command definitions and execution
+├── config.py           # Configuration management
+├── pyproject.toml      # Project dependencies
+├── pytest.ini          # Test configuration
+├── static/             # Frontend files
+│   ├── index.html
+│   ├── js/app.js
+│   └── css/style.css
+└── tests/              # Test suite
+    ├── test_app.py
+    ├── test_adb_commands.py
+    └── test_config.py
+```
+
+### Security Features
+
+- **Command Injection Prevention**: Uses list-based subprocess calls instead of shell execution
+- **Input Validation**: All API inputs are validated before processing
+- **Timeout Protection**: ADB commands have configurable timeouts
+- **CORS Configuration**: Configurable CORS origins for security
+
+### Logging
+
+The application includes comprehensive logging:
+
+```python
+# Logs are written to console by default
+# Configure log file via environment variable
+export LOG_FILE=adb_optimizer.log
+export LOG_LEVEL=DEBUG
+```
+
 ## Contributing
 
 Contributions are welcome! This is a straightforward project:
@@ -236,8 +344,9 @@ Contributions are welcome! This is a straightforward project:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test with real devices
-5. Submit a pull request
+4. **Run tests**: `uv run pytest`
+5. Test with real devices
+6. Submit a pull request
 
 Areas for improvement:
 - Additional command categories
@@ -245,6 +354,7 @@ Areas for improvement:
 - Batch command execution
 - Command presets/profiles
 - Undo/restore functionality
+- Enhanced test coverage
 
 ## Credits
 

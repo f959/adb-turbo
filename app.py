@@ -9,6 +9,8 @@ import os
 import sys
 import signal
 import atexit
+import logging
+from datetime import datetime, timezone
 from adb_commands import (
     check_adb_available,
     get_connected_devices,
@@ -20,13 +22,64 @@ from adb_commands import (
     get_command_state,
     COMMAND_CATEGORIES
 )
+from config import config, setup_logging
+
+# Setup logging
+setup_logging(config)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__, static_folder='static', template_folder='static')
-CORS(app)
+CORS(app, origins=config.CORS_ORIGINS)
 
-# Configuration
-HOST = '0.0.0.0'
-PORT = 8765
+
+# ============================================
+# API Response Helpers
+# ============================================
+
+def api_success(data=None, message=None, status=200):
+    """
+    Standardized success response
+    
+    Args:
+        data: Response data
+        message: Optional success message
+        status: HTTP status code
+    
+    Returns:
+        JSON response tuple
+    """
+    response = {
+        'success': True,
+        'data': data,
+        'timestamp': datetime.now(timezone.utc).isoformat()
+    }
+    if message:
+        response['message'] = message
+    return jsonify(response), status
+
+
+def api_error(error, status=400, details=None):
+    """
+    Standardized error response
+    
+    Args:
+        error: Error message
+        status: HTTP status code
+        details: Optional additional error details
+    
+    Returns:
+        JSON response tuple
+    """
+    response = {
+        'success': False,
+        'error': error,
+        'timestamp': datetime.now(timezone.utc).isoformat()
+    }
+    if details:
+        response['details'] = details
+    
+    logger.error(f"API Error ({status}): {error}")
+    return jsonify(response), status
 
 
 @app.route('/')
@@ -38,21 +91,24 @@ def index():
 @app.route('/api/check-adb', methods=['GET'])
 def check_adb():
     """Check if ADB is installed and available"""
-    available, message = check_adb_available()
-    return jsonify({
-        'available': available,
-        'message': message
-    })
+    try:
+        available, message = check_adb_available()
+        return api_success(data={
+            'available': available,
+            'message': message
+        })
+    except Exception as e:
+        return api_error(f"Failed to check ADB: {str(e)}", status=500)
 
 
 @app.route('/api/devices', methods=['GET'])
 def get_devices():
     """Get list of connected ADB devices"""
-    devices = get_connected_devices()
-    return jsonify({
-        'success': True,
-        'devices': devices
-    })
+    try:
+        devices = get_connected_devices()
+        return api_success(data={'devices': devices})
+    except Exception as e:
+        return api_error(f"Failed to get devices: {str(e)}", status=500)
 
 
 @app.route('/api/device-info/<device_id>', methods=['GET'])
@@ -79,8 +135,7 @@ def get_device_info(device_id):
         # Get comprehensive device information
         comprehensive_info = get_comprehensive_device_info(device_id)
         
-        return jsonify({
-            'success': True,
+        return api_success(data={
             'device_id': device_id,
             'manufacturer': manufacturer,
             'model': model,
@@ -95,10 +150,7 @@ def get_device_info(device_id):
             'details': comprehensive_info
         })
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return api_error(f"Failed to get device info: {str(e)}", status=500)
 
 
 @app.route('/api/categories', methods=['GET'])
@@ -106,15 +158,9 @@ def get_categories():
     """Get all command categories with their commands"""
     try:
         categories = get_categories_json()
-        return jsonify({
-            'success': True,
-            'categories': categories
-        })
+        return api_success(data={'categories': categories})
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return api_error(f"Failed to get categories: {str(e)}", status=500)
 
 
 @app.route('/api/command-states/<device_id>', methods=['GET'])
@@ -132,15 +178,9 @@ def get_command_states(device_id):
                     # Use command name as key
                     states[cmd.name] = state
         
-        return jsonify({
-            'success': True,
-            'states': states
-        })
+        return api_success(data={'states': states})
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return api_error(f"Failed to get command states: {str(e)}", status=500)
 
 
 @app.route('/api/execute', methods=['POST'])
@@ -153,18 +193,13 @@ def execute_command():
         action = data.get('action', 'disable')  # enable or disable
         
         if not device_id:
-            return jsonify({
-                'success': False,
-                'error': 'No device selected'
-            }), 400
+            return api_error('No device selected', status=400)
         
         if not command:
-            return jsonify({
-                'success': False,
-                'error': 'No command provided'
-            }), 400
+            return api_error('No command provided', status=400)
         
         # Execute the command
+        logger.info(f"Executing command on {device_id}: {command} ({action})")
         success, stdout, stderr = execute_adb_command(device_id, command)
         
         # Prepare output
@@ -172,17 +207,20 @@ def execute_command():
         if not output:
             output = "Command executed successfully" if success else "Command failed with no output"
         
-        return jsonify({
-            'success': success,
-            'output': output,
-            'error': stderr if not success else None
-        })
+        if success:
+            return api_success(data={
+                'output': output,
+                'action': action
+            })
+        else:
+            return api_error(
+                error="Command execution failed",
+                status=400,
+                details={'output': output, 'stderr': stderr}
+            )
         
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return api_error(f"Failed to execute command: {str(e)}", status=500)
 
 
 @app.route('/api/get-setting', methods=['POST'])
@@ -195,10 +233,7 @@ def get_setting():
         key = data.get('key')
         
         if not device_id or not key:
-            return jsonify({
-                'success': False,
-                'error': 'Missing device_id or key'
-            }), 400
+            return api_error('Missing device_id or key', status=400)
         
         # Get the setting value
         command = f"shell settings get {namespace} {key}"
@@ -206,17 +241,17 @@ def get_setting():
         
         value = stdout.strip() if success else None
         
-        return jsonify({
-            'success': success,
-            'value': value,
-            'error': stderr if not success else None
-        })
+        if success:
+            return api_success(data={'value': value, 'namespace': namespace, 'key': key})
+        else:
+            return api_error(
+                error="Failed to get setting",
+                status=400,
+                details={'stderr': stderr}
+            )
         
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return api_error(f"Failed to get setting: {str(e)}", status=500)
 
 
 def print_banner(url):
@@ -241,12 +276,14 @@ def print_banner(url):
 Press Ctrl+C to stop the server
 """
     print(banner)
+    logger.info(f"Server started at {url}")
 
 
 def cleanup():
     """Cleanup function to run on exit"""
-    print("\n\n👋 Server stopped. Port {PORT} is now free.")
+    print(f"\n\n👋 Server stopped. Port {config.PORT} is now free.")
     print("Thank you for using ADB Performance Optimizer!")
+    logger.info("Server stopped")
 
 
 def signal_handler(sig, frame):
@@ -262,12 +299,12 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, signal_handler)
     
     # Print banner
-    url = f"http://localhost:{PORT}"
-    print_banner(url)
+    print_banner(config.url)
     
     # Run the Flask app
     try:
-        app.run(host=HOST, port=PORT, debug=False, use_reloader=False)
+        logger.info(f"Starting Flask server on {config.HOST}:{config.PORT}")
+        app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, use_reloader=False)
     except (KeyboardInterrupt, SystemExit):
         pass  # Cleanup handled by signal_handler
 
